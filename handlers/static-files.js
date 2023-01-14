@@ -24,7 +24,7 @@ module.exports = (req, res) => {
             });
 
             res.write(data);
-            res.end();D
+            res.end();
         });
     } else {
         return true;
@@ -40,6 +40,8 @@ function getContentType(url) {
         return 'image/png';
     } else if (url.endsWith('js')) {
         return 'text/javascript';
+    }else if (url.endsWith('ico')){
+        return 'image/x-image';   
     }
 }
 
