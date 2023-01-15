@@ -53,10 +53,8 @@ module.exports = (req, res) => {
             }
 
             let oldPath = files.upload.filepath;
-            console.log(`OLDPATH${oldPath}`);
             let newPath = path.normalize(path.join(__dirname, '../content/images/' + files.upload.originalFilename));
-            console.log(`NEWPATH ${newPath}`);
-            console.log(`FILENAME ${files.upload.originalFilename}`);
+
             fs.copyFile(oldPath, newPath, (err) => {
                 if (err) {
                     throw err;
@@ -70,11 +68,8 @@ module.exports = (req, res) => {
                 }
 
                 let allCats = JSON.parse(data);
-                console.log(allCats);
                 allCats.push({ id: cats.length + 1, ...fileds, image: files.upload.originalFilename });
-                console.log(allCats);
                 let json = JSON.stringify(allCats);
-                console.log(json);
 
                 fs.writeFile('./data/cats.json', json, () => {
                     res.writeHead(301, { 'Location': '/' });
