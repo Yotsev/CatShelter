@@ -27,23 +27,6 @@ module.exports = (req, res) => {
         catsInfo.on('error', (err) => {
             console.log(err);
         });
-    } else if (pathname === '/cats/add-breed' && req.method === 'GET') {
-        const filePath = path.normalize(path.join(__dirname, '../views/addBreed.html'));
-
-        const breedsinfo = fs.createReadStream(filePath);
-
-        breedsinfo.on('data', (data) => {
-            res.write(data);
-        });
-
-        breedsinfo.on('end', () => {
-            res.end();
-        });
-
-        breedsinfo.on('error', (err) => {
-            console.log(err);
-        });
-
     } else if (pathname === '/cats/add-cat' && req.method === 'POST') {
         const form = new formidable.IncomingForm();
 
@@ -77,6 +60,23 @@ module.exports = (req, res) => {
                 });
             });
         });
+    } else if (pathname === '/cats/add-breed' && req.method === 'GET') {
+        const filePath = path.normalize(path.join(__dirname, '../views/addBreed.html'));
+
+        const breedsinfo = fs.createReadStream(filePath);
+
+        breedsinfo.on('data', (data) => {
+            res.write(data);
+        });
+
+        breedsinfo.on('end', () => {
+            res.end();
+        });
+
+        breedsinfo.on('error', (err) => {
+            console.log(err);
+        });
+
     } else if (pathname === '/cats/add-breed' && req.method === 'POST') {
         let formData = '';
 
@@ -102,6 +102,42 @@ module.exports = (req, res) => {
             res.writeHead(301, { 'Location': '/' });
             res.end();
         });
+    } else if (pathname.includes('/cats-edit') && req.method === 'GET') {
+        const filePath = path.normalize(path.join(__dirname, '../views/editCat.html'));
+        const pathname = url.parse(req.url).pathname;
+        const catId = Number(pathname.split('/').slice(-1)[0]);
+        const currentCat = cats.find((cat) => cat.id === catId);
+
+        let editPgae = fs.createReadStream(filePath)
+
+        editPgae.on('data', (data) => {
+            let modifiedData = data.toString().replace('{{id}}', currentCat.id);
+            modifiedData = modifiedData.replace('{{name}}', currentCat.name);
+            modifiedData = modifiedData.replace('{{description}}', currentCat.description);
+
+            const breedsOptions = breeds.map(b => `<option value="${b}">${b}</option>`);
+            modifiedData = modifiedData.replace('{{catBreeds}}', breedsOptions.join('/'));
+
+            modifiedData = modifiedData.replace('{{breed}}', currentCat.breed);
+            console.log(currentCat.breed);
+            console.log(modifiedData);
+            res.write(modifiedData);
+        })
+
+        editPgae.on('end', () => {
+            res.end();
+        })
+
+        editPgae.on('error', (err) => {
+            console.log(err);
+        })
+
+    } else if (pathname.includes('/cats-edit') && req.method === 'POST') {
+        //TODO:
+    } else if (pathname.includes('/cats-find-new-home') && req.method === 'GET') {
+        //TODO:
+    } else if (pathname.includes('/cata-find-new-home') && req.method === 'POST') {
+        //TODO:
     } else {
         return true;
     }
